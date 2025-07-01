@@ -1,7 +1,8 @@
 from sqlalchemy import Column, String, Text, Boolean, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import relationship
-from app.db.base import Base
 from sqlalchemy.dialects.postgresql import UUID
+from app.db.base import Base
+from app.utils.time import utcnow_column
 import uuid
 from datetime import datetime, timezone
 
@@ -21,7 +22,8 @@ class UserAddress(Base):
     latitude = Column(DECIMAL(9, 6))
     longitude = Column(DECIMAL(9, 6))
     is_default = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
+    is_active = Column(Boolean, default=True)
+    created_at = utcnow_column()
 
     user = relationship("User", back_populates="addresses")
     orders = relationship("Order", back_populates="address")

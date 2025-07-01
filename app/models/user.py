@@ -1,9 +1,9 @@
-from sqlalchemy import Column, String, Boolean, Text, DateTime
+from sqlalchemy import Column, ForeignKey, String, Boolean, Text, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.base import Base
+from app.utils.time import utcnow_column
 import uuid
-from datetime import datetime, timezone
 
 
 class User(Base):
@@ -14,11 +14,12 @@ class User(Base):
     email = Column(String(100), unique=True)
     phone = Column(String(15), unique=True)
     password_hash = Column(Text, nullable=False)
-    role = Column(String(20), nullable=False)
+    role_id = Column(UUID(as_uuid=True), ForeignKey("roles.id"))
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
+    created_at = utcnow_column()
+    updated_at = utcnow_column()
 
+    role = relationship("Role", back_populates="users")
     addresses = relationship(
         "UserAddress", back_populates="user", cascade="all, delete-orphan"
     )

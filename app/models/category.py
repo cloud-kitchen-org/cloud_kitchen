@@ -1,9 +1,10 @@
-from sqlalchemy import Column, String, Integer, ForeignKey, DateTime
+from sqlalchemy import Boolean, Column, String, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-from datetime import datetime, timezone
+
+from app.utils.time import utcnow_column
 
 
 class Category(Base):
@@ -14,8 +15,9 @@ class Category(Base):
         UUID(as_uuid=True), ForeignKey("restaurants.id", ondelete="CASCADE")
     )
     name = Column(String(100), nullable=False)
+    is_active = Column(Boolean, default=True)
     sort_order = Column(Integer, default=0)
-    created_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
+    created_at = utcnow_column()
 
     restaurant = relationship("Restaurant", back_populates="categories")
     items = relationship(

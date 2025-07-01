@@ -1,7 +1,8 @@
 from sqlalchemy import Column, String, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import relationship
-from app.db.base import Base
 from sqlalchemy.dialects.postgresql import UUID
+from app.db.base import Base
+from app.utils.time import utcnow_column
 import uuid
 from datetime import datetime, timezone
 
@@ -17,8 +18,8 @@ class Order(Base):
     total_amount = Column(DECIMAL(10, 2), nullable=False)
     payment_status = Column(String(20), default="PENDING")
     delivery_type = Column(String(20), default="delivery")
-    created_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
+    created_at = utcnow_column()
+    updated_at = utcnow_column()
 
     user = relationship("User", back_populates="orders")
     restaurant = relationship("Restaurant", back_populates="orders")

@@ -15,6 +15,8 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime, timezone
 
+from app.utils.time import utcnow_column
+
 
 class Restaurant(Base):
     __tablename__ = "restaurants"
@@ -36,8 +38,8 @@ class Restaurant(Base):
     opening_hours = Column(JSON)
     approval_status = Column(String(20), default="pending")
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
+    created_at = utcnow_column()
+    updated_at = utcnow_column()
 
     partner = relationship("User", back_populates="restaurants")
     categories = relationship(

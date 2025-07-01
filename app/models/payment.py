@@ -1,7 +1,8 @@
 from sqlalchemy import Column, String, ForeignKey, DateTime, DECIMAL, JSON
 from sqlalchemy.orm import relationship
-from app.db.base import Base
 from sqlalchemy.dialects.postgresql import UUID
+from app.db.base import Base
+from app.utils.time import utcnow_column
 import uuid
 from datetime import datetime, timezone
 
@@ -18,6 +19,6 @@ class Payment(Base):
     status = Column(String(20))
     paid_at = Column(DateTime)
     payment_metadata = Column(JSON)
-    created_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
+    created_at = utcnow_column()
 
     order = relationship("Order", back_populates="payment")

@@ -14,6 +14,8 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime, timezone
 
+from app.utils.time import utcnow_column
+
 
 class Item(Base):
     __tablename__ = "items"
@@ -29,8 +31,8 @@ class Item(Base):
     tax_percentage = Column(DECIMAL(5, 2), default=0.00)
     tags = Column(ARRAY(Text))
     is_available = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
-    updated_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
+    created_at = utcnow_column()
+    updated_at = utcnow_column()
 
     category = relationship("Category", back_populates="items")
     cart_items = relationship("CartItem", back_populates="item")

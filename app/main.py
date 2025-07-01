@@ -1,10 +1,26 @@
-# 📁 app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+
 from app.api.v1 import api_router
+from app.core.logger import Logger
+
+logger = Logger.get_logger(__name__)
+
+
+# Lifespan: startup and shutdown events
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Starting up FastAPI application...")
+    # Place startup tasks here (e.g., DB health checks, background tasks)
+    yield
+    logger.info("Shutting down FastAPI application...")
+    # Place cleanup tasks here (e.g., closing connections)
+    logger.info("Shutdown complete. Resources cleaned. Bye")
+
 
 # Initialize app
-app = FastAPI(title="Food Ordering Platform", version="1.0")
+app = FastAPI(title="Cloud Kitchen Platform", version="1.0.0", lifespan=lifespan)
 
 # Allow CORS for frontend during dev
 origins = [

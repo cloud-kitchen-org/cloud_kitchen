@@ -4,6 +4,7 @@ import os
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "FoodOrderApp"
+    LOGGING_LEVEL: str = "info"
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int

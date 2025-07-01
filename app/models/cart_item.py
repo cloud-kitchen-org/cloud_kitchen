@@ -5,6 +5,8 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime, timezone
 
+from app.utils.time import utcnow_column
+
 
 class CartItem(Base):
     __tablename__ = "cart_items"
@@ -14,7 +16,7 @@ class CartItem(Base):
     restaurant_id = Column(UUID(as_uuid=True), ForeignKey("restaurants.id"))
     item_id = Column(UUID(as_uuid=True), ForeignKey("items.id"))
     quantity = Column(Integer, default=1)
-    created_at = Column(DateTime, default=datetime.now(tz=timezone.utc))
+    created_at = utcnow_column()
 
     user = relationship("User", back_populates="cart_items")
     restaurant = relationship("Restaurant", back_populates="cart_items")
