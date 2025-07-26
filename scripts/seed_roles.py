@@ -11,7 +11,7 @@ def seed_roles():
     default_roles = [
         {"name": "admin", "description": "Administrator Role"},
         {"name": "partner", "description": "Restaurant Partner"},
-        {"name": "user", "description": "Application User"},
+        {"name": "customer", "description": "Customer Role"},
     ]
 
     for role in default_roles:

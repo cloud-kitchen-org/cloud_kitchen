@@ -1,21 +1,10 @@
 from sqlalchemy.orm import Session
 from app.models.user import User
-from app.schemas.user import UserCreate
-from app.utils.hashing import hash_password
-from uuid import uuid4
 from typing import Optional
 
 
 # Create user
-def create_user(db: Session, user_in: UserCreate) -> User:
-    user = User(
-        id=uuid4(),
-        full_name=user_in.full_name,
-        email=user_in.email,
-        phone=user_in.phone,
-        password_hash=hash_password(user_in.password),
-        role=user_in.role,
-    )
+def create_user(db: Session, user: User) -> User:
     db.add(user)
     db.commit()
     db.refresh(user)

@@ -6,19 +6,19 @@ from datetime import datetime
 
 class UserBase(BaseModel):
     full_name: str
-    email: EmailStr
-    phone: str = Field(..., min_length=10, max_length=15)
-    role: str
+    email: EmailStr | None = None
+    phone: str = Field(..., min_length=10, max_length=10)
+    role: str = Field(..., description="Role ID or name")
 
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=6)
+    password: str = Field(..., min_length=4)
 
 
 class UserOut(BaseModel):
     id: UUID
     full_name: str
-    email: EmailStr
+    email: EmailStr | None = None
     phone: str
     role: str
     is_active: bool
@@ -30,5 +30,7 @@ class UserOut(BaseModel):
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
-    phone: Optional[str] = Field(default=None, min_length=10, max_length=15)
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = Field(default=None, min_length=10, max_length=10)
+    role: Optional[str] = None
     is_active: Optional[bool] = None
