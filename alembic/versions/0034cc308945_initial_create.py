@@ -1,8 +1,8 @@
 """initial_create
 
-Revision ID: c444a58edb4d
+Revision ID: 0034cc308945
 Revises: 
-Create Date: 2025-07-01 16:35:45.557998
+Create Date: 2025-07-26 08:09:43.839035
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c444a58edb4d'
+revision: str = '0034cc308945'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,8 +25,9 @@ def upgrade() -> None:
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
-    sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
@@ -35,7 +36,7 @@ def upgrade() -> None:
     sa.Column('full_name', sa.String(length=100), nullable=False),
     sa.Column('email', sa.String(length=100), nullable=False),
     sa.Column('password_hash', sa.String(), nullable=False),
-    sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id'),
@@ -43,9 +44,9 @@ def upgrade() -> None:
     )
     op.create_table('system_user_roles',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('system_user_id', sa.UUID(), nullable=True),
-    sa.Column('role_id', sa.UUID(), nullable=True),
-    sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('system_user_id', sa.UUID(), nullable=False),
+    sa.Column('role_id', sa.UUID(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['system_user_id'], ['system_users.id'], ondelete='CASCADE'),
@@ -54,11 +55,11 @@ def upgrade() -> None:
     op.create_table('users',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('full_name', sa.String(length=100), nullable=False),
-    sa.Column('email', sa.String(length=100), nullable=True),
-    sa.Column('phone', sa.String(length=15), nullable=True),
+    sa.Column('email', sa.String(length=100), nullable=False),
+    sa.Column('phone', sa.String(length=15), nullable=False),
     sa.Column('password_hash', sa.Text(), nullable=False),
     sa.Column('role_id', sa.UUID(), nullable=True),
-    sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ),
@@ -68,7 +69,7 @@ def upgrade() -> None:
     )
     op.create_table('restaurants',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('partner_id', sa.UUID(), nullable=True),
+    sa.Column('partner_id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('image_url', sa.Text(), nullable=True),
@@ -82,8 +83,8 @@ def upgrade() -> None:
     sa.Column('latitude', sa.DECIMAL(precision=9, scale=6), nullable=True),
     sa.Column('longitude', sa.DECIMAL(precision=9, scale=6), nullable=True),
     sa.Column('opening_hours', sa.JSON(), nullable=True),
-    sa.Column('approval_status', sa.String(length=20), nullable=True),
-    sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('approval_status', sa.String(length=20), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['partner_id'], ['users.id'], ),
@@ -91,7 +92,7 @@ def upgrade() -> None:
     )
     op.create_table('user_addresses',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('user_id', sa.UUID(), nullable=True),
+    sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('label', sa.String(length=50), nullable=True),
     sa.Column('address_line1', sa.Text(), nullable=True),
     sa.Column('address_line2', sa.Text(), nullable=True),
@@ -101,31 +102,32 @@ def upgrade() -> None:
     sa.Column('pincode', sa.String(length=10), nullable=True),
     sa.Column('latitude', sa.DECIMAL(precision=9, scale=6), nullable=True),
     sa.Column('longitude', sa.DECIMAL(precision=9, scale=6), nullable=True),
-    sa.Column('is_default', sa.Boolean(), nullable=True),
-    sa.Column('is_active', sa.Boolean(), nullable=True),
+    sa.Column('is_default', sa.Boolean(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('categories',
+    op.create_table('menu_sections',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('restaurant_id', sa.UUID(), nullable=True),
+    sa.Column('restaurant_id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
-    sa.Column('is_active', sa.Boolean(), nullable=True),
-    sa.Column('sort_order', sa.Integer(), nullable=True),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('sort_order', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['restaurant_id'], ['restaurants.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('orders',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('user_id', sa.UUID(), nullable=True),
-    sa.Column('restaurant_id', sa.UUID(), nullable=True),
-    sa.Column('address_id', sa.UUID(), nullable=True),
-    sa.Column('status', sa.String(length=20), nullable=True),
+    sa.Column('user_id', sa.UUID(), nullable=False),
+    sa.Column('restaurant_id', sa.UUID(), nullable=False),
+    sa.Column('address_id', sa.UUID(), nullable=False),
+    sa.Column('status', sa.String(length=20), nullable=False),
     sa.Column('total_amount', sa.DECIMAL(precision=10, scale=2), nullable=False),
-    sa.Column('payment_status', sa.String(length=20), nullable=True),
-    sa.Column('delivery_type', sa.String(length=20), nullable=True),
+    sa.Column('payment_status', sa.String(length=20), nullable=False),
+    sa.Column('delivery_type', sa.String(length=20), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['address_id'], ['user_addresses.id'], ),
@@ -135,27 +137,26 @@ def upgrade() -> None:
     )
     op.create_table('items',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('category_id', sa.UUID(), nullable=True),
+    sa.Column('section_id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('price', sa.DECIMAL(precision=10, scale=2), nullable=False),
-    sa.Column('image_url', sa.Text(), nullable=True),
-    sa.Column('tax_percentage', sa.DECIMAL(precision=5, scale=2), nullable=True),
-    sa.Column('tags', sa.ARRAY(sa.Text()), nullable=True),
-    sa.Column('is_available', sa.Boolean(), nullable=True),
+    sa.Column('is_veg', sa.Boolean(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('image_url', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
-    sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['section_id'], ['menu_sections.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('payments',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('order_id', sa.UUID(), nullable=True),
+    sa.Column('order_id', sa.UUID(), nullable=False),
     sa.Column('provider', sa.String(length=50), nullable=True),
     sa.Column('transaction_id', sa.String(length=100), nullable=True),
     sa.Column('amount', sa.DECIMAL(precision=10, scale=2), nullable=True),
-    sa.Column('currency', sa.String(length=10), nullable=True),
-    sa.Column('status', sa.String(length=20), nullable=True),
+    sa.Column('currency', sa.Enum('INR', 'USD', 'EUR', 'GBP', name='currency'), nullable=False),
+    sa.Column('status', sa.Enum('pending', 'completed', 'failed', 'refunded', name='paymentstatus'), nullable=False),
     sa.Column('paid_at', sa.DateTime(), nullable=True),
     sa.Column('payment_metadata', sa.JSON(), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
@@ -164,10 +165,10 @@ def upgrade() -> None:
     )
     op.create_table('cart_items',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('user_id', sa.UUID(), nullable=True),
-    sa.Column('restaurant_id', sa.UUID(), nullable=True),
-    sa.Column('item_id', sa.UUID(), nullable=True),
-    sa.Column('quantity', sa.Integer(), nullable=True),
+    sa.Column('user_id', sa.UUID(), nullable=False),
+    sa.Column('restaurant_id', sa.UUID(), nullable=False),
+    sa.Column('item_id', sa.UUID(), nullable=False),
+    sa.Column('quantity', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['item_id'], ['items.id'], ),
     sa.ForeignKeyConstraint(['restaurant_id'], ['restaurants.id'], ),
@@ -176,8 +177,8 @@ def upgrade() -> None:
     )
     op.create_table('order_items',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('order_id', sa.UUID(), nullable=True),
-    sa.Column('item_id', sa.UUID(), nullable=True),
+    sa.Column('order_id', sa.UUID(), nullable=False),
+    sa.Column('item_id', sa.UUID(), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=False),
     sa.Column('price_at_order_time', sa.DECIMAL(precision=10, scale=2), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
@@ -196,7 +197,7 @@ def downgrade() -> None:
     op.drop_table('payments')
     op.drop_table('items')
     op.drop_table('orders')
-    op.drop_table('categories')
+    op.drop_table('menu_sections')
     op.drop_table('user_addresses')
     op.drop_table('restaurants')
     op.drop_table('users')

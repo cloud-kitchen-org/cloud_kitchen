@@ -14,9 +14,9 @@ class SystemUser(Base):
     full_name = Column(String(100), nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    is_active = Column(Boolean, default=True)
+    is_active = Column(Boolean, default=True, nullable=False)
     created_at = utcnow_column()
-    updated_at = utcnow_column()
+    updated_at = utcnow_column(onupdate=True)
 
     roles = relationship(
         "SystemUserRole", back_populates="system_user", cascade="all, delete-orphan"

@@ -12,10 +12,10 @@ class CartItem(Base):
     __tablename__ = "cart_items"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
-    restaurant_id = Column(UUID(as_uuid=True), ForeignKey("restaurants.id"))
-    item_id = Column(UUID(as_uuid=True), ForeignKey("items.id"))
-    quantity = Column(Integer, default=1)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    restaurant_id = Column(UUID(as_uuid=True), ForeignKey("restaurants.id"), nullable=False)
+    item_id = Column(UUID(as_uuid=True), ForeignKey("items.id"), nullable=False)
+    quantity = Column(Integer, default=1, nullable=False)
     created_at = utcnow_column()
 
     user = relationship("User", back_populates="cart_items")

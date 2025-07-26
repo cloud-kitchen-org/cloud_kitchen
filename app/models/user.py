@@ -11,13 +11,13 @@ class User(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     full_name = Column(String(100), nullable=False)
-    email = Column(String(100), unique=True)
-    phone = Column(String(15), unique=True)
+    email = Column(String(100), unique=True, nullable=False)
+    phone = Column(String(15), unique=True, nullable=False)
     password_hash = Column(Text, nullable=False)
-    role_id = Column(UUID(as_uuid=True), ForeignKey("roles.id"))
-    is_active = Column(Boolean, default=True)
+    role_id = Column(UUID(as_uuid=True), ForeignKey("roles.id"), nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
     created_at = utcnow_column()
-    updated_at = utcnow_column()
+    updated_at = utcnow_column(onupdate=True)
 
     role = relationship("Role", back_populates="users")
     addresses = relationship(
