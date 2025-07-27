@@ -38,9 +38,38 @@ class RestaurantCreate(RestaurantBase):
     pass
 
 
+class RestaurantUpdate(BaseModel):
+    name: Optional[str]
+    description: Optional[str]
+    image_url: Optional[str]
+    address_line1: Optional[str]
+    address_line2: Optional[str]
+    area: Optional[str]
+    city: Optional[str]
+    state: Optional[str]
+    pincode: Optional[str]
+    latitude: Optional[float]
+    longitude: Optional[float]
+    opening_hours: Optional[RestaurantOpeningHours]
+
+
 class RestaurantOut(RestaurantBase):
     id: UUID
     approval_status: str
+
+    class Config:
+        from_attributes = True
+
+
+class RestaurantSummaryOut(BaseModel):
+    id: UUID
+    name: str
+    image_url: Optional[str] = None
+    area: str
+    city: str
+    state: str
+    approval_status: str
+    is_active: bool
 
     class Config:
         from_attributes = True
