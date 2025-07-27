@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
 from contextlib import asynccontextmanager
 
 from app.api.v1 import api_router
@@ -20,7 +21,35 @@ async def lifespan(app: FastAPI):
 
 
 # Initialize app
+
 app = FastAPI(title="Cloud Kitchen Platform", version="1.0.0", lifespan=lifespan)
+
+
+# Add Bearer token security scheme to OpenAPI docs
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description="Cloud Kitchen Platform API",
+        routes=app.routes,
+    )
+    openapi_schema["components"]["securitySchemes"] = {
+        "BearerAuth": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+        }
+    }
+    for path in openapi_schema["paths"].values():
+        for method in path.values():
+            method.setdefault("security", [{"BearerAuth": []}])
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
 
 # Allow CORS for frontend during dev
 origins = [
