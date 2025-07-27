@@ -44,3 +44,16 @@ class RestaurantOut(RestaurantBase):
 
     class Config:
         from_attributes = True
+
+
+class RestaurantSummaryOut(BaseModel):
+    id: UUID
+    name: str
+    image_url: Optional[str] = None
+    area: str
+    city: str
+    state: str
+    approval_status: str
+
+    class Config:
+        from_attributes = True
